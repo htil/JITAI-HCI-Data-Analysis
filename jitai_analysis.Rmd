@@ -1,0 +1,137 @@
+---
+title: "JITAI HCI Analysis"
+output: html_notebook
+---
+Likeability
+
+
+# Which function
+https://www.datasciencemadesimple.com/which-function-in-r/
+
+#Array Indexing 
+https://rspatial.org/intr/4-indexing.html
+
+# rowMeans Function
+https://www.programmingr.com/tutorial/rowmeans-in-r/
+
+
+```{r}
+library(data.table)
+library(plotly)
+
+likeability <- fread("likeability_formatted.csv")
+
+
+# JITAI 1
+
+# Numeric
+jitai_1_numeric <- likeability[ which(likeability$JITAI_TYPE=='1' & likeability$NUMERIC_TYPE!='Numeric'), 4:8]
+
+jitai_1_numeric_means <- rowMeans(jitai_1_numeric)
+
+mean_jitai_1_numeric <- mean(jitai_1_numeric_means)
+
+# Non-Numeric
+jitai_1_non_numeric <- likeability[ which(likeability$JITAI_TYPE=='1' & likeability$NUMERIC_TYPE!='Non-numeric'), 4:8]
+
+jitai_1_non_numeric_means <- rowMeans(jitai_1_non_numeric)
+
+mean_jitai_1_non_numeric <- mean(jitai_1_non_numeric_means)
+
+
+# JITAI 2 
+
+# Numeric
+jitai_2_numeric <- likeability[ which(likeability$JITAI_TYPE=='2' & likeability$NUMERIC_TYPE!='Numeric'), 4:8]
+
+jitai_2_numeric_means <- rowMeans(jitai_2_numeric)
+
+mean_jitai_2_numeric <- mean(jitai_2_numeric_means)
+
+# Non numeric
+jitai_2_non_numeric <- likeability[ which(likeability$JITAI_TYPE=='2' & likeability$NUMERIC_TYPE!='Non-numeric'), 4:8]
+
+jitai_2_non_numeric_means <- rowMeans(jitai_2_non_numeric)
+
+mean_jitai_2_non_numeric <- mean(jitai_2_non_numeric_means)
+
+
+# Numeric v. Non Numeric
+
+# Numeric
+jitai_numeric <- likeability[ which( likeability$NUMERIC_TYPE!='Numeric'), 4:8]
+
+jitai_numeric_means <- rowMeans(jitai_numeric)
+
+mean_jitai_numeric <- mean(jitai_numeric_means)
+
+# Non Numeric
+jitai_non_numeric <- likeability[ which( likeability$NUMERIC_TYPE!='Non-numeric'), 4:8]
+
+jitai_non_numeric_means <- rowMeans(jitai_non_numeric)
+
+mean_jitai_non_numeric <- mean(jitai_non_numeric_means)
+
+# Plot
+# https://plotly.com/r/bar-charts/
+
+if (TRUE) {
+MessageTypes <- c("JITAI 1", "JITAI 2")
+Numeric <- c(mean_jitai_1_numeric, mean_jitai_2_numeric)
+Non_Numeric <- c(mean_jitai_1_non_numeric, mean_jitai_2_non_numeric)
+data <- data.frame(Message_Types, Numeric, Non_Numeric)
+
+fig <- plot_ly(
+  data, 
+  x = ~Message_Types, 
+  y = ~Numeric, 
+  type = 'bar', 
+  name = 'Numeric',
+  text = ~Numeric, 
+  textposition = 'auto'
+  )
+
+fig <- fig %>% add_trace(
+  y = ~Non_Numeric, 
+  name = 'Non Numeric',  
+  text = ~Non_Numeric, 
+  textposition = 'auto'
+)
+
+fig <- fig %>% layout(
+  title = "Numeric v. Non-Numeric", 
+  yaxis = list(title = 'Likeability', 
+  range = c(0, 5)), 
+  barmode = 'group'
+)
+
+fig
+}
+
+
+table <- data.frame(x = c("Numeric", "Non Numeric"),
+                    y = c(mean_jitai_numeric, mean_jitai_non_numeric))
+table$x <- factor(table$x, levels = c(as.character(table$x)))
+
+fig <- plot_ly(
+    data=table,
+    x = ~x,
+    y = ~y,
+    name = "JITAI",
+    type = "bar",
+    text = ~y, 
+    textposition = 'auto'
+)
+
+fig <- fig %>% layout(title = "Numeric v. Non-Numeric", xaxis = list( title = "Numeric Type"), yaxis = list( title = "Likeability", range = c(0, 5)))
+
+fig
+
+```
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Cmd+Shift+K* to preview the HTML file). 
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+
