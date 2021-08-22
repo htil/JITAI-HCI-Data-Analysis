@@ -3,25 +3,43 @@ import csv
 
 def getComprehensionData(location):
     with open(location, 'r') as csv_file:
-        csv_reader = csv.reader(csv_file)
+        csv_reader = csv.reader(csv_file, delimiter=',')
 
         for index, col in enumerate(csv_reader):
             responses = []
             questionID = []
             comprehension = {}
             questionNum = 0
+            answerNum = 0
 
             if (index == 0):
                 questionID = col
-                print(questionID, '\n')
+                # print(questionID, '\n')
 
-            if (index == 1):
-                questions = col
-                print(questions, '\n')
-
-            if (index > 11):  # skip if empty
+            elif (index > 0):
                 responses = col
-                print(responses, '\n')
+                # print(responses, '\n')
+
+                for x, row in enumerate(col):
+                    if(x < len(col)):
+                        questionNum = questionNum + 1
+
+                    if (row != ' '):  # skip if empty
+                        response = responses[x]
+                        answerNum = answerNum + 1
+
+                        eat_less = responses.count('Eat less')
+                        eat_more = responses.count('Eat more')
+                        eat_slower = responses.count('Eat slower')
+                        eat_faster = responses.count('Eat faster')
+
+                print(f'The number of Eat Less is: {eat_less}  \n')
+                print(f'The number of Eat More is: {eat_more} \n')
+                print(f'The number of Eat Slower is: {eat_slower} \n')
+                print(f'The number of Eat Faster is: {eat_faster} \n\n')
+
+    print(f'Total number of question IDs: {questionNum} \n')
+    print(f'Total number of responses: {answerNum} \n')
 
     csv_file.close()
     return questionID, responses
@@ -53,5 +71,5 @@ def writeComprehensionData(comprehension):
 
 
 responses = getComprehensionData('/Users/ecm/Desktop/Comprehension_copy.csv')
-comprehension = getComprehensionAnswerType(questionID, responses)
-writeComprehensionData(comprehension)
+# comprehension = getComprehensionAnswerType(questionID, responses)
+# writeComprehensionData(comprehension)
