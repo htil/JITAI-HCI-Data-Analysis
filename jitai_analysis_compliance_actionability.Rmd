@@ -1,0 +1,65 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+library(data.table)
+library(plotly)
+
+compliance_actionability <- fread("comp_action_formatted.csv")
+
+
+####### JITAI 1 ######
+jitai_1_numeric <- compliance_actionability[ which(compliance_actionability$JITAI_TYPE=='1' & compliance_actionability$NUMERIC_TYPE=='Numeric'), 4:5]
+
+jitai_1_non_numeric <- compliance_actionability[ which(compliance_actionability$JITAI_TYPE=='1' & compliance_actionability$NUMERIC_TYPE=='Non-numeric'), 4:5]
+
+# Compliance
+jitai_1_numeric_means_compliance <- colMeans(jitai_1_numeric[,1], na.rm = TRUE)
+
+jitai_1_non_numeric_means_compliance <- colMeans(jitai_1_non_numeric[,1], na.rm = TRUE)
+
+#Actionabilty
+jitai_1_numeric_means_actionability <- colMeans(jitai_1_numeric[,2], na.rm = TRUE)
+
+jitai_1_non_numeric_means_actionability <- colMeans(jitai_1_non_numeric[,2], na.rm = TRUE)
+
+
+####### JITAI 2 ######
+
+jitai_2_numeric <- compliance_actionability[ which(compliance_actionability$JITAI_TYPE=='2' & compliance_actionability$NUMERIC_TYPE=='Numeric'), 4:5]
+
+jitai_2_non_numeric <- compliance_actionability[ which(compliance_actionability$JITAI_TYPE=='2' & compliance_actionability$NUMERIC_TYPE=='Non-numeric'), 4:5]
+
+# Compliance
+jitai_2_numeric_means_compliance <- colMeans(jitai_2_numeric[,1], na.rm = TRUE)
+
+jitai_2_non_numeric_means_compliance <- colMeans(jitai_2_non_numeric[,1], na.rm = TRUE)
+
+#Actionabilty
+jitai_2_numeric_means_actionability <- colMeans(jitai_2_numeric[,2], na.rm = TRUE)
+
+jitai_2_non_numeric_means_actionability <- colMeans(jitai_2_non_numeric[,2], na.rm = TRUE)
+
+
+j2n_compliance <- unlist(jitai_2_numeric[,1])
+j2nn_compliance <- unlist(jitai_2_non_numeric[,1])
+
+j2n_n_act <- unlist(jitai_2_numeric[,2])
+j2n_nn_act <- unlist(jitai_2_non_numeric[,2])
+
+
+
+x <- 1:264
+
+#plot(x,t1,type = "o")
+#plot(x,t2,type = "o")
+#boxplot(j2n_n_act, j2n_nn_act)
+#boxplot(jitai_2_non_numeric[,1],border="red")
+
+
+
+```
+
+
