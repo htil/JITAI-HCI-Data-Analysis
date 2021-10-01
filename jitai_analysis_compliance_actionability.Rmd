@@ -6,57 +6,114 @@ output: html_notebook
 ```{r}
 library(data.table)
 library(plotly)
+library(ggplot2)
 
 compliance_actionability <- fread("comp_action_formatted.csv")
 
 
 ####### JITAI 1 ######
-jitai_1_numeric <- compliance_actionability[ which(compliance_actionability$JITAI_TYPE=='1' & compliance_actionability$NUMERIC_TYPE=='Numeric'), 4:5]
+jitai_1_numeric <- compliance_actionability[ which(compliance_actionability$JITAI_TYPE == '1' & compliance_actionability$NUMERIC_TYPE == 'Numeric'), 4:5]
 
-jitai_1_non_numeric <- compliance_actionability[ which(compliance_actionability$JITAI_TYPE=='1' & compliance_actionability$NUMERIC_TYPE=='Non-numeric'), 4:5]
+jitai_1_non_numeric <- compliance_actionability[ which(compliance_actionability$JITAI_TYPE == '1' & compliance_actionability$NUMERIC_TYPE == 'Non-numeric'), 4:5]
 
 # Compliance
 jitai_1_numeric_means_compliance <- colMeans(jitai_1_numeric[,1], na.rm = TRUE)
 
 jitai_1_non_numeric_means_compliance <- colMeans(jitai_1_non_numeric[,1], na.rm = TRUE)
 
-#Actionabilty
+#Actionability
 jitai_1_numeric_means_actionability <- colMeans(jitai_1_numeric[,2], na.rm = TRUE)
 
 jitai_1_non_numeric_means_actionability <- colMeans(jitai_1_non_numeric[,2], na.rm = TRUE)
 
+jitai_1_numeric_means <- mean(c(jitai_1_numeric_means_compliance, jitai_1_numeric_means_actionability))
+
+jitai_1_non_numeric_means <- mean(c(jitai_1_non_numeric_means_compliance, jitai_1_non_numeric_means_actionability))
+
 
 ####### JITAI 2 ######
 
-jitai_2_numeric <- compliance_actionability[ which(compliance_actionability$JITAI_TYPE=='2' & compliance_actionability$NUMERIC_TYPE=='Numeric'), 4:5]
+jitai_2_numeric <- compliance_actionability[ which(compliance_actionability$JITAI_TYPE == '2' & compliance_actionability$NUMERIC_TYPE == 'Numeric'), 4:5]
 
-jitai_2_non_numeric <- compliance_actionability[ which(compliance_actionability$JITAI_TYPE=='2' & compliance_actionability$NUMERIC_TYPE=='Non-numeric'), 4:5]
+jitai_2_non_numeric <- compliance_actionability[ which(compliance_actionability$JITAI_TYPE == '2' & compliance_actionability$NUMERIC_TYPE == 'Non-numeric'), 4:5]
 
 # Compliance
 jitai_2_numeric_means_compliance <- colMeans(jitai_2_numeric[,1], na.rm = TRUE)
 
 jitai_2_non_numeric_means_compliance <- colMeans(jitai_2_non_numeric[,1], na.rm = TRUE)
 
-#Actionabilty
+# Actionability
 jitai_2_numeric_means_actionability <- colMeans(jitai_2_numeric[,2], na.rm = TRUE)
 
 jitai_2_non_numeric_means_actionability <- colMeans(jitai_2_non_numeric[,2], na.rm = TRUE)
 
+jitai_2_numeric_means <- mean(c(jitai_2_numeric_means_compliance, jitai_2_numeric_means_actionability))
+
+jitai_2_non_numeric_means <- mean(c(jitai_2_non_numeric_means_compliance, jitai_2_non_numeric_means_actionability))
+
+j1n_compliance <- unlist(jitai_1_numeric[,1])
+j1nn_compliance <- unlist(jitai_1_non_numeric[,1])
+
+j1n_act <- unlist(jitai_1_numeric[,2])
+j1nn_act <- unlist(jitai_1_non_numeric[,2])
 
 j2n_compliance <- unlist(jitai_2_numeric[,1])
 j2nn_compliance <- unlist(jitai_2_non_numeric[,1])
 
-j2n_n_act <- unlist(jitai_2_numeric[,2])
-j2n_nn_act <- unlist(jitai_2_non_numeric[,2])
+j2n_act <- unlist(jitai_2_numeric[,2])
+j2nn_act <- unlist(jitai_2_non_numeric[,2])
 
+# JITAI totals
 
+jitai_numeric <- compliance_actionability[ which(compliance_actionability$NUMERIC_TYPE == 'Numeric'), 4:5]
+jitai_non_numeric <- compliance_actionability[ which(compliance_actionability$NUMERIC_TYPE == 'Non-numeric'), 4:5]
 
-x <- 1:264
+jitai_numeric_means <- rowMeans(jitai_numeric, na.rm = TRUE)
+jitai_non_numeric_means <- rowMeans(jitai_non_numeric, na.rm = TRUE)
 
-#plot(x,t1,type = "o")
-#plot(x,t2,type = "o")
-#boxplot(j2n_n_act, j2n_nn_act)
-#boxplot(jitai_2_non_numeric[,1],border="red")
+mean_jitai_numeric <- mean(jitai_numeric_means)
+mean_jitai_non_numeric <- mean(jitai_non_numeric_means)
+
+# bar charts
+
+if (TRUE){
+  Message_Types <- c("JITAI 1", "JITAI 2")
+  Numeric <- c(jitai_1_numeric_means, jitai_2_numeric_means)
+  Non_Numeric <- c(jitai_1_non_numeric_means, jitai_2_non_numeric_means)
+  data <- data.frame(Message_Types, Numeric, Non_Numeric)
+  
+  fig <- plot_ly(data, x = ~Message_Types, y = ~Numeric, type = 'bar', name = 'Numeric', text = ~Numeric, textposition = 'auto')
+  
+  fig <- fig %>% add_trace(y = ~Non_Numeric, name = 'Non Numeric', text = ~Non_Numeric, textposition = 'auto')
+  
+  fig <- fig %>% layout(title = "Numeric v. Non-Numeric", yaxis = list(title = 'Compliance & Actionability', range = c(0,5)), barmode = 'group')
+  
+  fig
+}
+
+table <- data.frame(x = c("Numeric", "Non-Numeric"), y = c(mean_jitai_numeric, mean_jitai_non_numeric))
+table$x <- factor(table$x, levels = c(as.character(table$x)))
+
+fig <- plot_ly(data = table, x = ~x, y = ~y, name = 'JITAI', type = "bar", text = ~y, textposition = 'auto')
+
+fig <- fig %>% layout(title = "Numeric v. Non-Numeric", xaxis = list(title = "Numeric Type"), yaxis = list(title = "Compliance & Actionability", range = c(0,5)))
+
+fig
+
+# Boxplots
+
+dat_comp_1 <- data.frame(jitai_1_comp_avgs = c(j1nn_compliance, j1n_compliance), main = "JITAI 1", jitai_1_comp = rep(c("NON", "NUMERIC")))
+boxplot(jitai_1_comp_avgs ~ jitai_1_comp, data = dat_comp_1, main = "COMPLIANCE", xlab = "JITAI 1", ylab = "COMPLIANCE MEANS", border = "red")
+
+dat_comp_2 <- data.frame(jitai_2_comp_avgs = c(j2nn_compliance, j2n_compliance), main = "JITAI 2", jitai_2_comp = rep(c("NON", "NUMERIC")))
+boxplot(jitai_2_comp_avgs ~ jitai_2_comp, data = dat_comp_2, main = "COMPLIANCE", xlab = "JITAI 2", ylab = "COMPLIANCE MEANS", border = "blue")
+
+dat_action_1 <- data.frame(jitai_1_action_avgs = c(j1nn_act, j1n_act), main = "JITAI 1", jitai_1_action = rep(c("NON", "NUMERIC")))
+boxplot(jitai_1_action_avgs ~ jitai_1_action, data = dat_action_1, main = "ACTIONABILITY", xlab = "JITAI 1", ylab = "ACTIONABILITY MEANS", border = "red")
+
+dat_action_2 <- data.frame(jitai_2_action_avgs = c(j2nn_act, j2n_act), main = "JITAI 2", jitai_2_action = rep(c("NON", "NUMERIC")))
+boxplot(jitai_2_action_avgs ~ jitai_2_action, data = dat_action_2, main = "ACTIONABILITY", xlab = "JITAI 2", ylab = "ACTIONABILITY MEANS", border = "blue")
+
 
 
 
