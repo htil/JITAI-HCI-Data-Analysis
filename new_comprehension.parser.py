@@ -37,7 +37,6 @@ def getCompData(answer):
         return "EAT_SLOWER"
     elif "Eat faster" in answer:
         return "EAT_FASTER"
-    print("file formatted")
 
 
 def loadComprehensionFile(location):
@@ -66,7 +65,8 @@ def loadComprehensionFile(location):
                         comp_dictType = getCompData(answer)
                         comp_dict[comp_dictType] = item
                         responseTotal = responseTotal + 1
-                    # print(f'Total responses for subject {x} : ', responseTotal)
+        print("file formatted")
+        # print(f'Total responses for subject {x} : ', responseTotal)
         return responses
 
 
