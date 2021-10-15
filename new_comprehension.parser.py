@@ -66,19 +66,18 @@ def loadComprehensionFile(location):
                         comp_dictType = getCompData(answer)
                         comp_dict[comp_dictType] = item
                         responseTotal = responseTotal + 1
-                    print(
-                        f'Total responses for subject {x-1} : ', responseTotal)
+                    # print(f'Total responses for subject {x} : ', responseTotal)
         return responses
 
 
-def writeCompDict(comp_formatted):
+def writeCompDict(responses):
     fieldNames = ["QUESTION_NBR", "CORR_ANS", "EAT_LESS",
                   "EAT_MORE", "EAT_SLOWER", "EAT_FASTER"]
     with open('comprehension_test.csv', 'w') as f:
         writer = csv.DictWriter(
             f, fieldnames=fieldNames, extrasaction='ignore')
         writer.writeheader()
-        for response in comp_formatted:
+        for response in responses:
             if (response != ''):
                 writer.writerow(response)
     f.close()
