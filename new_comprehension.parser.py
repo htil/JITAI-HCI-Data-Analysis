@@ -29,14 +29,10 @@ def handleCompData(questionNum,  question_ids, comp_dict):
 
 
 def getCompData(answer):
-    if "Eat less" in answer:
-        return "EAT_LESS"
-    elif "Eat more" in answer:
-        return "EAT_MORE"
-    elif "Eat slower" in answer:
-        return "EAT_SLOWER"
-    elif "Eat faster" in answer:
-        return "EAT_FASTER"
+    if "Eat" in answer:
+        return "RESPONSE"
+    elif "None" in answer:
+        return "NONE"
 
 
 def loadComprehensionFile(location):
@@ -71,8 +67,7 @@ def loadComprehensionFile(location):
 
 
 def writeCompDict(responses):
-    fieldNames = ["QUESTION_NBR", "CORR_ANS", "EAT_LESS",
-                  "EAT_MORE", "EAT_SLOWER", "EAT_FASTER"]
+    fieldNames = ["QUESTION_NBR", "CORR_ANS", "RESPONSE", "NONE"]
     with open('comprehension_test.csv', 'w') as f:
         writer = csv.DictWriter(
             f, fieldnames=fieldNames, extrasaction='ignore')
