@@ -19,22 +19,22 @@ https://www.programmingr.com/tutorial/rowmeans-in-r/
 library(data.table)
 library(plotly)
 
-likeability <- fread("likeability_formatted.csv")
-
+likeability <- fread("likeability_formatted2.csv")
 
 # JITAI 1
 
 # Numeric
 jitai_1_numeric <- likeability[ which(likeability$JITAI_TYPE=='1' & likeability$NUMERIC_TYPE!='Numeric'), 4:8]
 
-jitai_1_numeric_means <- rowMeans(jitai_1_numeric)
+jitai_1_numeric_means <- rowMeans(jitai_1_numeric, na.rm = TRUE)
 
-mean_jitai_1_numeric <- mean(jitai_1_numeric_means)
+mean_jitai_1_numeric <- round(mean(jitai_1_numeric_means), digits = 2)
+
 
 # Non-Numeric
 jitai_1_non_numeric <- likeability[ which(likeability$JITAI_TYPE=='1' & likeability$NUMERIC_TYPE!='Non-numeric'), 4:8]
 
-jitai_1_non_numeric_means <- rowMeans(jitai_1_non_numeric)
+jitai_1_non_numeric_means <- rowMeans(jitai_1_non_numeric, na.rm = TRUE)
 
 mean_jitai_1_non_numeric <- mean(jitai_1_non_numeric_means)
 
@@ -44,16 +44,16 @@ mean_jitai_1_non_numeric <- mean(jitai_1_non_numeric_means)
 # Numeric
 jitai_2_numeric <- likeability[ which(likeability$JITAI_TYPE=='2' & likeability$NUMERIC_TYPE!='Numeric'), 4:8]
 
-jitai_2_numeric_means <- rowMeans(jitai_2_numeric)
+jitai_2_numeric_means <- rowMeans(jitai_2_numeric, na.rm = TRUE)
 
-mean_jitai_2_numeric <- mean(jitai_2_numeric_means)
+mean_jitai_2_numeric <- round(mean(jitai_2_numeric_means), digits = 2)
 
 # Non numeric
 jitai_2_non_numeric <- likeability[ which(likeability$JITAI_TYPE=='2' & likeability$NUMERIC_TYPE!='Non-numeric'), 4:8]
 
-jitai_2_non_numeric_means <- rowMeans(jitai_2_non_numeric)
+jitai_2_non_numeric_means <- rowMeans(jitai_2_non_numeric, na.rm = TRUE)
 
-mean_jitai_2_non_numeric <- mean(jitai_2_non_numeric_means)
+mean_jitai_2_non_numeric <- round(mean(jitai_2_non_numeric_means), 2)
 
 
 # Numeric v. Non Numeric
@@ -61,16 +61,20 @@ mean_jitai_2_non_numeric <- mean(jitai_2_non_numeric_means)
 # Numeric
 jitai_numeric <- likeability[ which( likeability$NUMERIC_TYPE!='Numeric'), 4:8]
 
-jitai_numeric_means <- rowMeans(jitai_numeric)
+jitai_numeric_means <- rowMeans(jitai_numeric, na.rm = TRUE)
 
-mean_jitai_numeric <- mean(jitai_numeric_means)
+mean_jitai_numeric <- round(mean(jitai_numeric_means), digits = 2)
 
 # Non Numeric
 jitai_non_numeric <- likeability[ which( likeability$NUMERIC_TYPE!='Non-numeric'), 4:8]
 
-jitai_non_numeric_means <- rowMeans(jitai_non_numeric)
+jitai_non_numeric_means <- rowMeans(jitai_non_numeric, na.rm = TRUE)
 
-mean_jitai_non_numeric <- mean(jitai_non_numeric_means)
+mean_jitai_non_numeric <- round(mean(jitai_non_numeric_means), digits = 2)
+
+
+
+
 
 # Plot
 # https://plotly.com/r/bar-charts/
@@ -79,11 +83,11 @@ if (TRUE) {
 MessageTypes <- c("JITAI 1", "JITAI 2")
 Numeric <- c(mean_jitai_1_numeric, mean_jitai_2_numeric)
 Non_Numeric <- c(mean_jitai_1_non_numeric, mean_jitai_2_non_numeric)
-data <- data.frame(Message_Types, Numeric, Non_Numeric)
+data <- data.frame(MessageTypes, Numeric, Non_Numeric)
 
 fig <- plot_ly(
   data, 
-  x = ~Message_Types, 
+  x = ~MessageTypes, 
   y = ~Numeric, 
   type = 'bar', 
   name = 'Numeric',
@@ -106,26 +110,33 @@ fig <- fig %>% layout(
 )
 
 fig
+
+
+
+
+
 }
 
-
-table <- data.frame(x = c("Numeric", "Non Numeric"),
+if (TRUE) {
+  table <- data.frame(x = c("Numeric", "Non Numeric"),
                     y = c(mean_jitai_numeric, mean_jitai_non_numeric))
-table$x <- factor(table$x, levels = c(as.character(table$x)))
+  table$x <- factor(table$x, levels = c(as.character(table$x)))
+  
+  fig <- plot_ly(
+      data=table,
+      x = ~x,
+      y = ~y,
+      name = "JITAI",
+      type = "bar",
+      text = ~y, 
+      textposition = 'auto'
+  )
 
-fig <- plot_ly(
-    data=table,
-    x = ~x,
-    y = ~y,
-    name = "JITAI",
-    type = "bar",
-    text = ~y, 
-    textposition = 'auto'
-)
-
-fig <- fig %>% layout(title = "Numeric v. Non-Numeric", xaxis = list( title = "Numeric Type"), yaxis = list( title = "Likeability", range = c(0, 5)))
-
-fig
+  fig <- fig %>% layout(title = "Numeric v. Non-Numeric", xaxis = list( title = "Numeric Type"), yaxis = list( title = "Likeability", range = c(0, 5)))
+  
+  fig
+  
+}
 
 ```
 
